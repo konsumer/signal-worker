@@ -1,12 +1,55 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Hello, World!</title>
-	</head>
-	<body>
-		<h1 id="heading">Hello, World!</h1>
-		<p>This page comes from a static asset stored at `public/index.html` as configured in `wrangler.jsonc`.</p>
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="https://avatars.githubusercontent.com/u/83857" />
+    <title>Signal</title>
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+      pre {
+        overflow: auto;
+        border: 1px solid #000;
+        padding: 10px;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Signal</h1>
+    <p>This is a websocket signal-server. It's purpose is to broadcast any message across multiple clients.</p>
+    In your code use <code id="urlDisplay"></code>. If you view the source of this page, you can see an example.
+    <pre id="output"></pre>
+  </body>
+
+  <script>
+    const websocketBase = document.location.origin.replace(/http(s?):\/\//, 'ws$1://') + '/ws'
+
+    // this updates display
+    document.getElementById('urlDisplay').innerHTML = websocketBase + '/YOUR_CHANNEL'
+
+    const randomString = () => Math.random().toString(36).substring(2)
+
+    const output = document.getElementById('output')
+
+    // here, each client gets an ID when they connect
+    const id = randomString()
+    output.innerHTML = `Your ID: ${id}`
+
+    // create a client in room "example_site" and update output on each message
+    const websocket = new WebSocket(`${websocketBase}/example_site`)
+
+    websocket.addEventListener('message', (event) => {
+      output.innerHTML += `\n${event.data}`
+      output.scrollTo(0, output.scrollHeight)
+    })
+
+    // send a random string to everyone (with id, so they can show it) once every second
+    setInterval(() => {
+      const r = `${id}:${randomString()}`
+      websocket.send(r)
+    }, 1000)
+  </script>
 </html>
