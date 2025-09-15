@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Reticulum JS Client</title>
+  </head>
+  <body>
+    <h1>Reticulum JS Reference Implementation</h1>
+
+    <script type="module">
+      import { parsePacket, generateIdentity } from './reticulum.js'
+
+      const packets = `7e0000caafffe2fa9d5c6110ce08b175d3ec5400589422d01e94c975dfd983db428129ddb10d6776a178037d5db9f04267187fc21a75b36d2718af444e6ff368eb02fdd2e1446ae88e99938231896915595e704d89cea024604732f91133f431a0aeaf228449873fad9083344cf897afdc865467b6e5e52e3882de7b446aba40f23fcd22df7c9b6238b526f93874a9dd0bb49a951c476710018089a6d52ae60f59884578e9cfff911b38b916f2a3dc6f1b98a2936d5efbfc9c193e3e2f21a8fe17622a1d2f258937195ff45bb639ef3b22b32ea4ce96ead643d51fb2df7414102c2f93a0537e
+      7e0300ac84c757b22ecb6b95750a6a5ce39c9b00619410219ae2503bf787869d80ff9eb0daf113654d2643ae6fd16df9eb73c08c9709e8cc74acc37589776e620bce69a672bab615eea21132ee51c649476f04067e
+      7e2100aecf3fe64b5b394c7d5d996a5ac49835b100a734c9c1d320ea4332438072d6dc9f6c7d5d9b07c75b5c6364434c33ca1066303c6a8229913c0776977fb9c9c5f5e027737d5e888c57066caa4a8e11b9faeae78e256ec60bc318e2c0f0d908e4b8cd4ffe0068c7c25058b78eed347591ee96e07798e06bf0f503985a9f220ea1877d5d40e8661325f9027962392c92847a8798caa301f6b3433bd59044d28bd8690cdbb58248d6ebafb387fe5c45a5d42da81727102fddd6c14b6bc146e6477f075a83a2658baad34c0c92c40e416e6f6e796d6f75732050656572c07e
+      7e0000caafffe2fa9d5c6110ce08b175d3ec5400346d6a89c729a1488818db1a298cda6b6c8e0435d5fbe1c9b205906f32616c6f1c1c22f0812aeb92c7ac93000133a9ef4698da770f813081d1a6356fe749e9d59518a19dcaecde02bcf1c3d9692ebe523f6eb920a7e4750d3fc40c7cd3652bdc79a3187a75f17b4cb5d8ea87d2e619fd92784d5263b9601178071c223e780da570101359967f5860394cd4e9e635fe4afb191121b8757762382c53e68ce775234648dbb81175ec49bc38edd6a909a5b27d5efcbf2a630359937b7f87803e1233c5625b89f9fde6d22c18da0d5c969b06ba7e
+      7e03009009bc102092ebd9031e148c140dd72c008ab974073817b0a87abb5dd93476fd15ac0df6665fb815baef239ec3f25cf9c1aec774ee60087f1cd5c0e7d7a66046de3b84b6c7aadb7d5e47d1c5ba751aa275037e`
+        .split('\n')
+        .map((p) => parsePacket(p.trim()))
+
+      // here normally, I would parse each incoming packet.
+      // if type == PACKET_ANNOUNCE store to list of peers
+      // if type == PACKET_DATA if address matches sigcheck and store message (for later decryption)
+
+      console.log(packets)
+
+      // this should be stored securely, private-key needs to be password-protected.
+      console.log(await generateIdentity())
+    </script>
+  </body>
+</html>
