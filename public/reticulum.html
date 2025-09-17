@@ -19,12 +19,7 @@
         .map((hex) => {
           try {
             const packet = parsePacket(hex)
-            console.log('Parsed packet:', {
-              type: packet.header.packetType === TYPE_ANNOUNCE ? 'ANNOUNCE' : packet.header.packetType === TYPE_DATA ? 'DATA' : 'OTHER',
-              address: packet.destinationAddress,
-              hops: packet.hops,
-              hasAnnounceData: !!packet.announceData
-            })
+            console.log('Parsed packet:', packet)
             return packet
           } catch (error) {
             console.error('Failed to parse packet:', hex, error)
@@ -35,60 +30,24 @@
 
       console.log('\n=== Testing Identity Generation ===')
       const identity = await generateIdentity()
-      console.log('Generated identity:', {
-        address: identity.address,
-        publicKeyHex: bytesToHex(identity.signingPublicKey),
-        publicKeyLength: identity.signingPublicKey.length
-      })
+      console.log('Generated identity:', identity)
 
       console.log('\n=== Testing Announce Packet Creation ===')
       const announcePacket = await createAnnouncePacket(identity)
-      console.log('Created announce packet:', {
-        packetHex: announcePacket.packetHex,
-        packetLength: announcePacket.packet.length,
-        payloadLength: announcePacket.payload.length
-      })
+      console.log('Created announce packet:', announcePacket)
 
-      let parsedAnnounce
-      try {
-        parsedAnnounce = parsePacket(announcePacket.packetHex)
-        console.log('Parsed our announce packet:', {
-          type: parsedAnnounce.header.packetType === TYPE_ANNOUNCE ? 'ANNOUNCE' : 'OTHER',
-          address: parsedAnnounce.destinationAddress,
-          matchesIdentity: parsedAnnounce.destinationAddress === identity.address,
-          hasAnnounceData: !!parsedAnnounce.announceData,
-          publicKeyMatches: parsedAnnounce.announceData ? bytesToHex(parsedAnnounce.announceData.publicKey) === bytesToHex(identity.signingPublicKey) : false
-        })
-      } catch (error) {
-        console.error('Failed to parse our own announce packet:', error)
-      }
+      const parsedAnnounce = parsePacket(announcePacket.packetHex)
+      console.log('Parsed our announce packet:', parsedAnnounce)
 
       console.log('\n=== Testing Remote Identity & Data Packets ===')
-      if (parsedAnnounce?.identity) {
-        console.log('Found remote identity in announce packet:', {
-          address: parsedAnnounce.identity.address,
-          isRemote: parsedAnnounce.identity.isRemote,
-          hasPrivateKeys: !parsedAnnounce.identity.isRemote
-        })
-
-        const message = new TextEncoder().encode('Hello from JS client!')
-
-        const unencryptedPacket = await createDataPacket(identity, parsedAnnounce.identity, message, false)
-        console.log('Created unencrypted data packet:', {
-          packetHex: unencryptedPacket.packetHex,
-          encrypted: unencryptedPacket.encrypted,
-          payloadLength: unencryptedPacket.payload.length
-        })
-
-        const encryptedPacket = await createDataPacket(identity, parsedAnnounce.identity, message, true)
-        console.log('Created encrypted data packet:', {
-          packetHex: encryptedPacket.packetHex,
-          encrypted: encryptedPacket.encrypted,
-          payloadLength: encryptedPacket.payload.length
-        })
-      } else {
-        console.log('No identity found in parsed announce packet')
-      }
+      console.log('Found remote identity in announce packet:', parsedAnnounce)
+      const message = new TextEncoder().encode('Hello from JS client!')
+      
+      const unencryptedPacket = await createDataPacket(identity, parsedAnnounce.identity, message, false)
+      console.log('Created unencrypted data packet:', unencryptedPacket)
+      
+      const encryptedPacket = await createDataPacket(identity, parsedAnnounce.identity, message, true)
+      console.log('Created encrypted data packet:', encryptedPacket)
     </script>
   </body>
 </html>
