@@ -6,6 +6,7 @@
   "scripts": {
     "deploy": "npx -y wrangler deploy",
     "start": "npx -y wrangler dev",
-    "lint": "npx -y prettier -w ."
+    "lint": "npx -y prettier -w .",
+    "test": "node --test"
   }
 }
